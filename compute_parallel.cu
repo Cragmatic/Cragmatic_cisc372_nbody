@@ -73,7 +73,7 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 void do_thing() {
 	int** my_matrix;
 	cudaMallocManaged(&my_matrix, 10*10*sizeof(int));
-	<<<dumb_kernel>>>(10, my_matrix);
+	dumb_kernel<<<1 1>>>(10, my_matrix);
 	cudaDeviceSynchronize();
 	for (int i = 0; i < 10; i++) {
 		printf("\n");

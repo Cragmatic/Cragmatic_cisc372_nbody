@@ -80,7 +80,9 @@ void do_thing() {
 	printf("cuda malloc'd\n");
 	for (int i = 0; i < 100; i++) {
 			my_matrix[i] = i;
+			printf("%d\n", i);
 		}
+	printf("initialized\n");
 	dumb_kernel<<<1, 1>>>(10, my_matrix);
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();

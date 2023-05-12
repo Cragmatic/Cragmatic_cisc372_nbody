@@ -5,8 +5,8 @@
 
 
 __global__ void dumb_kernel(int size, int** matrix) {
-	for (i=0; i<size; i++) {
-		for (j=0; j<size; j++) {
+	for (int i=0; i<size; i++) {
+		for (int j=0; j<size; j++) {
 			matrix[i][j] = threadIdx.x;
 		}
 	}
@@ -64,7 +64,7 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 	int index = threadIdx.x;
 	int stride = blockDim.x;
 	for (int i=0; i<n; i+=stride) {
-		accel_sum[n] +=
+		accel_sum[n] += 0;
 	}
 }
 
@@ -75,9 +75,9 @@ void do_thing() {
 	
 	<<<dumb_kernel>>>(10, my_matrix);
 	for (int i = 0; i < 10; i++) {
-		printf("\n")
+		printf("\n");
 		for (int j = 0; j < 10; j++) {
-			printf("%d\t")
+			printf("%d\t");
 		}
 	}
 	cudaDeviceSynchronize();

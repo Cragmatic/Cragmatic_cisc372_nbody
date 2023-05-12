@@ -14,6 +14,8 @@ __global__ void dumb_kernel(int size, int** matrix) {
 	
 }
 
+/*
+
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
 //Returns: None
@@ -59,7 +61,7 @@ void compute(){
 	free(values);
 }
 
-/*
+
 __global__
 void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 	int index = threadIdx.x;

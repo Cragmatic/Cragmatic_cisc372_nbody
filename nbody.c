@@ -7,8 +7,6 @@
 #include "planets.h"
 #include "compute.h"
 
-void do_thing();
-
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;

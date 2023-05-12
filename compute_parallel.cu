@@ -77,6 +77,7 @@ void do_thing() {
 	printf("starting the function\n");
 	int* my_matrix;
 	cudaMallocManaged(&my_matrix, 100*sizeof(int));
+	cudaDeviceSynchronize();
 	printf("cuda malloc'd\n");
 	for (int i = 0; i < 100; i++) {
 			my_matrix[i] = i;

@@ -8,7 +8,7 @@
 __global__ void dumb_kernel(int size, int* matrix) {
 	for (int i=0; i<size; i++) {
 		for (int j=0; j<size; j++) {
-			matrix[i*size+j] = threadIdx.x;
+			matrix[i*size+j] = matrix[i*size+j] + threadIdx.x;
 		}
 	}
 	
@@ -81,7 +81,6 @@ void do_thing() {
 	for (int i = 0; i < 100; i++) {
 			my_matrix[i] = i;
 		}
-	}
 	dumb_kernel<<<1, 1>>>(10, my_matrix);
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();

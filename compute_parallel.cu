@@ -5,10 +5,10 @@
 #include <stdio.h> //I added this to print my silly little dumb kernel.
 
 
-__global__ void dumb_kernel(int size, int** matrix) {
+__global__ void dumb_kernel(int size, int* matrix) {
 	for (int i=0; i<size; i++) {
 		for (int j=0; j<size; j++) {
-			matrix[i][j] = threadIdx.x;
+			matrix[i*size+j] = threadIdx.x;
 		}
 	}
 	
@@ -75,8 +75,8 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 
 void do_thing() {
 	printf("starting the function\n");
-	int** my_matrix;
-	cudaMallocManaged(&my_matrix, 10*10*sizeof(int));
+	int* my_matrix;
+	cudaMallocManaged(&my_matrix), 10*10*sizeof(int));
 	printf("cuda malloc'd\n");
 	dumb_kernel<<<1, 1>>>(10, my_matrix);
 	printf("launched kernel\n");
@@ -85,7 +85,7 @@ void do_thing() {
 	for (int i = 0; i < 10; i++) {
 		printf("\n");
 		for (int j = 0; j < 10; j++) {
-			printf("%d\t", my_matrix[i][j]);
+			printf("%d\t", my_matrix[i*10+j]);
 		}
 	}
 	printf("about to free\n");

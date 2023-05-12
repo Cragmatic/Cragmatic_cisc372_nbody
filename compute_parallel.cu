@@ -77,21 +77,28 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 
 void do_thing() {
 	printf("starting the function\n");
-	int* my_matrix;
-	cudaMallocManaged(&my_matrix, 100*sizeof(int));
-	//cudaDeviceSynchronize();
-	printf("cuda malloc'd\n");
-	/*
+	int my_matrix[100]
 	for (int i = 0; i < 1; i++) {
 			my_matrix[i] = i;
 			printf("%d\n", i);
 		}
-	printf("initialized\n");
-	*/
-	dumb_kernel<<<1, 1>>>(10, my_matrix);
+	printf("initialized local matrix\n");
+	int* d_my_matrix;
+	//cudaMallocManaged(&my_matrix, 100*sizeof(int));
+	printf("allocating matrix on device\n");
+	cudaMalloc(&my_matrix, 10*10*sizeof(int));
+	printf("copying matrix to device\n");
+	cudaMemcpy(d_my_matrix, my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
+	//cudaDeviceSynchronize();
+	printf("cuda malloc completedd\n");
+	dumb_kernel<<<1, 1>>>(10, d_my_matrix);
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();
 	printf("sync'd up\n");
+	cudaMemcpy(my_matrix, d_my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
+	printf("copied back\n");
+	cudaFree(d_my_matrix);
+	printf("freed device matrix\n");
 	for (int i = 0; i < 100; i++) {
 		printf("%d\n", my_matrix[i]);
 		/*
@@ -101,8 +108,6 @@ void do_thing() {
 		}
 		*/
 	}
-	printf("about to free\n");
-	cudaFree(my_matrix);
 	printf("done\n");
 
 }

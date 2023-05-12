@@ -99,7 +99,7 @@ void do_thing() {
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();
 	printf("sync'd up\n");
-	cudaMemcpy(example_matrix, d_my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(example_matrix, d_my_matrix, 10*10*sizeof(int), cudaMemcpyDeviceToHost);
 	printf("copied back\n");
 	cudaFree(d_my_matrix);
 	printf("freed device matrix\n");

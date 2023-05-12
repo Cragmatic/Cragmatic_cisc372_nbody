@@ -78,6 +78,11 @@ void do_thing() {
 	int* my_matrix;
 	cudaMallocManaged(&my_matrix, 10*10*sizeof(int));
 	printf("cuda malloc'd\n");
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			my_matrix[i*10+j] = i*10+j;
+		}
+	}
 	dumb_kernel<<<1, 1>>>(10, my_matrix);
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();

@@ -79,7 +79,7 @@ void do_thing() {
 	for (int i = 0; i < 10; i++) {
 		printf("\n");
 		for (int j = 0; j < 10; j++) {
-			printf("%d\t");
+			printf("%d\t", my_matrix[i][j]);
 		}
 	}
 	cudaFree(&my_matrix);

@@ -90,7 +90,7 @@ void do_thing() {
 	int d_my_matrix[100];
 	//cudaMallocManaged(&my_matrix, 100*sizeof(int));
 	printf("allocating matrix on device\n");
-	cudaMalloc(&d_my_matrix, 10*10*sizeof(int));
+	cudaMalloc((void**) &d_my_matrix, 10*10*sizeof(int));
 	printf("copying matrix to device\n");
 	cudaMemcpy(d_my_matrix, my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
 	//cudaDeviceSynchronize();

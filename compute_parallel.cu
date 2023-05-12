@@ -10,7 +10,7 @@ void dumb_kernel(int size, int* matrix) {
 	printf("%d is the current thread\n", threadIdx.x);
 	for (int i=0; i<size; i++) {
 		for (int j=0; j<size; j++) {
-			matrix[i*size+j] = 0;
+			matrix[i*size+j] = i*size+j+threadIdx.x;
 		}
 	}
 	
@@ -79,8 +79,8 @@ void do_thing() {
 	printf("starting the function\n");
 	int my_matrix[100];
 	for (int i = 0; i < 100; i++) {
-			my_matrix[i] = i;
-			printf("%d\t", i);
+			my_matrix[i] = 0;
+			printf("%d\t", my_matrix[i]);
 		}
 	printf("initialized local matrix\n");
 	int* d_my_matrix;

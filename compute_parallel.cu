@@ -87,7 +87,7 @@ void do_thing() {
 			printf("%d\t", my_matrix[i]);
 		}
 	printf("initialized local matrix\n");
-	int* d_my_matrix;
+	int d_my_matrix[100];
 	//cudaMallocManaged(&my_matrix, 100*sizeof(int));
 	printf("allocating matrix on device\n");
 	cudaMalloc(&d_my_matrix, 10*10*sizeof(int));

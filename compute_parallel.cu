@@ -91,11 +91,14 @@ void do_thing() {
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();
 	printf("sync'd up\n");
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 100; i++) {
+		printf("%d\n", my_matrix[i]);
+		/*
 		printf("\n");
 		for (int j = 0; j < 10; j++) {
 			printf("%d\t", my_matrix[i*10+j]);
 		}
+		*/
 	}
 	printf("about to free\n");
 	cudaFree(my_matrix);

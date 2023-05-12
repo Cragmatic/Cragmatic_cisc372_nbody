@@ -79,7 +79,7 @@ void do_thing() {
 	cudaMallocManaged(&my_matrix, 100*sizeof(int));
 	cudaDeviceSynchronize();
 	printf("cuda malloc'd\n");
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 1; i++) {
 			my_matrix[i] = i;
 			printf("%d\n", i);
 		}

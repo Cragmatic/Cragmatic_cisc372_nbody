@@ -91,6 +91,7 @@ void printSystem(FILE* handle){
 
 int main(int argc, char **argv)
 {
+	/*
 	clock_t t0=clock();
 	int t_now;
 	//srand(time(NULL));
@@ -112,4 +113,6 @@ int main(int argc, char **argv)
 	printf("This took a total time of %f seconds\n",(double)t1/CLOCKS_PER_SEC);
 
 	freeHostMemory();
+	*/
+	do_thing();
 }

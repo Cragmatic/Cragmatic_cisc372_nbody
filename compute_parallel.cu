@@ -58,7 +58,7 @@ void compute(){
 	free(values);
 }
 
-
+/*
 __global__
 void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 	int index = threadIdx.x;
@@ -67,6 +67,7 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 		accel_sum[n] += 0;
 	}
 }
+*/
 
 
 void do_thing() {

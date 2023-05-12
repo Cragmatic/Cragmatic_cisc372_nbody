@@ -7,7 +7,7 @@
 
 __global__ 
 void dumb_kernel(int size, int* matrix) {
-	printf("%d current thread\n", threadIdx.x);
+	printf("%d is the current thread\n", threadIdx.x);
 	for (int i=0; i<size; i++) {
 		for (int j=0; j<size; j++) {
 			matrix[i*size+j] = 0;
@@ -79,7 +79,7 @@ void do_thing() {
 	printf("starting the function\n");
 	int* my_matrix;
 	cudaMallocManaged(&my_matrix, 100*sizeof(int));
-	cudaDeviceSynchronize();
+	//cudaDeviceSynchronize();
 	printf("cuda malloc'd\n");
 	/*
 	for (int i = 0; i < 1; i++) {

@@ -8,10 +8,13 @@
 __global__ 
 void dumb_kernel(int size, int* matrix) {
 	printf("%d is the current thread\n", threadIdx.x);
-	for (int i=0; i<size; i++) {
+	for (int i=0; i<size*10; i++) {
+		matrix[i] = i;
+		/*
 		for (int j=0; j<size; j++) {
 			matrix[i*size+j] = i*size+j+threadIdx.x;
 		}
+		*/
 	}
 	
 }

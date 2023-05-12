@@ -76,7 +76,7 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 void do_thing() {
 	printf("starting the function\n");
 	int* my_matrix;
-	cudaMallocManaged(&my_matrix), 10*10*sizeof(int));
+	cudaMallocManaged(&my_matrix, 10*10*sizeof(int));
 	printf("cuda malloc'd\n");
 	dumb_kernel<<<1, 1>>>(10, my_matrix);
 	printf("launched kernel\n");

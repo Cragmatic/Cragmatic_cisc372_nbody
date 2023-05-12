@@ -77,7 +77,7 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 
 void do_thing() {
 	printf("starting the function\n");
-	int my_matrix[100]
+	int my_matrix[100];
 	for (int i = 0; i < 1; i++) {
 			my_matrix[i] = i;
 			printf("%d\n", i);
@@ -86,7 +86,7 @@ void do_thing() {
 	int* d_my_matrix;
 	//cudaMallocManaged(&my_matrix, 100*sizeof(int));
 	printf("allocating matrix on device\n");
-	cudaMalloc(&my_matrix, 10*10*sizeof(int));
+	cudaMalloc(&d_my_matrix, 10*10*sizeof(int));
 	printf("copying matrix to device\n");
 	cudaMemcpy(d_my_matrix, my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
 	//cudaDeviceSynchronize();

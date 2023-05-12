@@ -78,6 +78,7 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 void do_thing() {
 	printf("starting the function\n");
 	int my_matrix[100];
+	int example_matrix[100];
 	for (int i = 0; i < 100; i++) {
 			my_matrix[i] = 0;
 			printf("%d\t", my_matrix[i]);
@@ -95,12 +96,12 @@ void do_thing() {
 	printf("launched kernel\n");
 	cudaDeviceSynchronize();
 	printf("sync'd up\n");
-	cudaMemcpy(my_matrix, d_my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(example_matrix, d_my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
 	printf("copied back\n");
 	cudaFree(d_my_matrix);
 	printf("freed device matrix\n");
 	for (int i = 0; i < 100; i++) {
-		printf("%d\n", my_matrix[i]);
+		printf("%d\n", example_matrix[i]);
 		/*
 		printf("\n");
 		for (int j = 0; j < 10; j++) {

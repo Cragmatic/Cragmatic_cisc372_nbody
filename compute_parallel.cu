@@ -2,6 +2,7 @@
 #include <math.h>
 #include "vector.h"
 #include "config.h"
+#include <stdio.h> //I added this to print my silly little dumb kernel.
 
 
 __global__ void dumb_kernel(int size, int** matrix) {

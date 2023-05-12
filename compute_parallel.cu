@@ -78,9 +78,9 @@ void sum_rows(int n, vector3* accel_sum, vector3** accels) {
 void do_thing() {
 	printf("starting the function\n");
 	int my_matrix[100];
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 100; i++) {
 			my_matrix[i] = i;
-			printf("%d\n", i);
+			printf("%d\t", i);
 		}
 	printf("initialized local matrix\n");
 	int* d_my_matrix;

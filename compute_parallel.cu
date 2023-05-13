@@ -2,7 +2,7 @@
 #include <math.h>
 #include "vector.h"
 #include "config.h"
-#include "stdio.h"
+#include <stdio.h>
 
 //My Kernel
 //Whatever I called it

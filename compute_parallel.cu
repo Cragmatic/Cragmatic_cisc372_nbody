@@ -10,6 +10,7 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	int j = blockIdx.y * blockDim.y + threadIdx.y;
+	printf("Hello from thread coordinates %d, %d\n", i, j);
 	if (i > NUMENTITIES || j > NUMENTITIES) {
 		return;
 	}

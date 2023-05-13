@@ -27,11 +27,7 @@ __global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, do
 		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
 		FILL_VECTOR(accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
-	printf("accels at %d, %d:\n", i, j);
-	for (k=0;k<3;k++) {
-		printf("%d\t", accels[i*NUMENTITIES+j][k]);
-	}
-	printf("\n");
+	printf("accels at %d, %d: %d\t%d\t%d\n", i, j, accels[i*NUMENTITIES+j][0],accels[i*NUMENTITIES+j][1],accels[i*NUMENTITIES+j][2]);
 	__syncthreads();
 
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.

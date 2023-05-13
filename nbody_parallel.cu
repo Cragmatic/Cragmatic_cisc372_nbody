@@ -114,7 +114,7 @@ int main(int argc, char **argv)
     //end block
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid); //Altered
+		compute(d_hPos, d_hVel, dimBlock, dimGrid); //Altered
 	}
 
     //start block 2

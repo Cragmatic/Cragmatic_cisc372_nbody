@@ -57,11 +57,11 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
+	/**
 	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	vector3** accels=(vector3**)malloc(sizeof(vector3*)*NUMENTITIES);
 	for (i=0;i<NUMENTITIES;i++)
 		accels[i]=&values[i*NUMENTITIES];
-	/**
 	//first compute the pairwise accelerations.  Effect is on the first argument.
 	for (i=0;i<NUMENTITIES;i++){
 		for (j=0;j<NUMENTITIES;j++){
@@ -86,6 +86,8 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 	vector3* d_values
 	cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES);
+	for (i=0;i<NUMENTITIES;i++)
+		d_accels[i]=&d_values[i*NUMENTITIES];
 	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, mass);
 	//END MY CODE SECTION
 
@@ -111,4 +113,5 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 
 	//Parallel Frees
 	cudaFree(d_accels);
+	cudaFree(d_values);
 }

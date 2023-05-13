@@ -5,7 +5,7 @@
 #include "vector.h"
 #include "config.h"
 #include "planets.h"
-#include "compute.h"
+#include "compute_parallel.h"
 
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 
     //start block 2
     cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
-	cudaMemcpy(hVel, d_Vel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
+	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
     
     cudaFree(d_hPos);
 	cudaFree(d_hVel);

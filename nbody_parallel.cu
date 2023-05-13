@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
-	cudaMalloc(&d_mass, sizeof(double) * numObjects);
+	cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
 
 	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);

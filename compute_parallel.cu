@@ -6,8 +6,7 @@
 
 //My Kernel
 //Whatever I called it
-__global__ void pairwise_accel(vector3* d_hPos, vector3* d_hVel, double* mass) {
-	extern __shared__ vector3 accels[];
+__global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* mass) {
 	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -18,7 +17,7 @@ __global__ void pairwise_accel(vector3* d_hPos, vector3* d_hVel, double* mass) {
 		return;
 	}
 	if (i==j) {
-		FILL_VECTOR(accels[i*NUMENTITIES+j],0,0,0);
+		FILL_VECTOR(d_accels[i*NUMENTITIES+j],0,0,0);
 	}
 	else{
 		vector3 distance;
@@ -26,26 +25,24 @@ __global__ void pairwise_accel(vector3* d_hPos, vector3* d_hVel, double* mass) {
 		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 		double magnitude=sqrt(magnitude_sq);
 		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
-		FILL_VECTOR(accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
-		printf("accels at %d, %d: %f\t%f\t%f\n", i, j, accels[i*NUMENTITIES+j][0],accels[i*NUMENTITIES+j][1],accels[i*NUMENTITIES+j][2]);
+		FILL_VECTOR(d_accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
+		printf("accels at %d, %d: %f\t%f\t%f\n", i, j, d_accels[i*NUMENTITIES+j][0],d_accels[i*NUMENTITIES+j][1],d_accels[i*NUMENTITIES+j][2]);
 	}
-	__syncthreads();
+}
 
+
+__global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* mass) {
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 		vector3 accel_sum={0,0,0};
 		for (k=0;k<3;k++)
-			accel_sum[k]+=accels[i*NUMENTITIES+j][k];
-		
-//????
-	__syncthreads();
+			accel_sum[k]+=d_accels[i*NUMENTITIES+j][k];
 
-		//compute the new velocity based on the acceleration and time interval
-		//compute the new position based on the velocity and time interval
 		for (k=0;k<3;k++){
 			d_hVel[i][k]+=accel_sum[k]*INTERVAL;
 			d_hPos[i][k]=d_hVel[i][k]*INTERVAL;
 		}
 }
+
 
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
@@ -80,10 +77,11 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 
 
 	//MY CODE SECTION (1st attempt):
-	//vector3* d_accels;
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
-	//cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
-	pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
+	pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, mass);
+	sum_rows_and_compute<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, mass);
+	
+	
 	//END MY CODE SECTION
 
 

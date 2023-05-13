@@ -50,8 +50,6 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 	int i,j,k;
 	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	vector3** accels=(vector3**)malloc(sizeof(vector3*)*NUMENTITIES);
-	printf("dimBlock.x, dimBlock.y: %d, %d", dimBlock.x, dimBlock.y);
-	printf("dimGrid.x, dimGrid.y: %d, %d\n", dimGrid.x, dimGrid.y);
 	for (i=0;i<NUMENTITIES;i++)
 		accels[i]=&values[i*NUMENTITIES];
 	/**

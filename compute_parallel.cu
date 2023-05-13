@@ -32,6 +32,11 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 
 
 __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* mass) {
+	int k;
+	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	int j = blockIdx.y * blockDim.y + threadIdx.y;
+	
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 		vector3 accel_sum={0,0,0};
 		for (k=0;k<3;k++)

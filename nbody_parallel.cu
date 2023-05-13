@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
-	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y;
+	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
     //end block
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){

@@ -6,13 +6,13 @@
 
 //My Kernel
 //Whatever I called it
-__global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* mass) {
+__global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* d_mass) {
 	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	int j = blockIdx.y * blockDim.y + threadIdx.y;
 	printf("Hello from thread coordinates %d, %d with args bidx.x: %d, bdim.x: %d, tidx.x: %d, bidx.y: %d, bdim.y: %d, tidx.y: %d, mass: %d\n", 
-	i, j, blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y, mass[j]);
+	i, j, blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y, d_mass[j]);
 	if (i > NUMENTITIES || j > NUMENTITIES) {
 		return;
 	}
@@ -24,14 +24,14 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 		for (k=0;k<3;k++) distance[k]=d_hPos[i][k]-d_hPos[j][k];printf("distances: at %d,%d: %f\t%f\t%f\n", i, j, distance[0],distance[1],distance[2]);
 		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 		double magnitude=sqrt(magnitude_sq);
-		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
+		double accelmag=-1*GRAV_CONSTANT*d_mass[j]/magnitude_sq;
 		FILL_VECTOR(d_accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 		//printf("accels at %d, %d: %f\t%f\t%f\n", i, j, d_accels[i*NUMENTITIES+j][0],d_accels[i*NUMENTITIES+j][1],d_accels[i*NUMENTITIES+j][2]);
 	}
 }
 
 
-__global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* mass) {
+__global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* d_mass) {
 	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -54,7 +54,7 @@ __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
+void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid, double* d_mass){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	//int i,j,k;
 	/**
@@ -83,8 +83,8 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock,
 
 	//MY CODE SECTION (1st attempt):
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
-	pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, mass);
-	sum_rows_and_compute<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, mass);
+	pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, d_mass);
+	sum_rows_and_compute<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, d_mass);
 	
 	
 	//END MY CODE SECTION

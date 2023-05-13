@@ -6,7 +6,7 @@
 
 //My Kernel
 //Whatever I called it
-__global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, double* mass) {
+__global__ void pairwise_accel(vector3* accels, vector3* d_hPos, vector3* d_hVel, double* mass) {
 	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -21,13 +21,13 @@ __global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, do
 	}
 	else{
 		vector3 distance;
-		for (k=0;k<3;k++) distance[k]=hPos[i][k]-hPos[j][k];
+		for (k=0;k<3;k++) distance[k]=d_hPos[i][k]-d_hPos[j][k];
 		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 		double magnitude=sqrt(magnitude_sq);
 		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
 		FILL_VECTOR(accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
-	printf("accels at %d, %d: %d\t%d\t%d with mag:%d\n", i, j, accels[i*NUMENTITIES+j][0],accels[i*NUMENTITIES+j][1],accels[i*NUMENTITIES+j][2], magnitude);
+	printf("accels at %d, %d: %d\t%d\t%d with mag:%d\n", i, j, accels[i*NUMENTITIES+j][0],accels[i*NUMENTITIES+j][1],accels[i*NUMENTITIES+j][2]);
 	__syncthreads();
 
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
@@ -41,8 +41,8 @@ __global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, do
 		//compute the new velocity based on the acceleration and time interval
 		//compute the new position based on the velocity and time interval
 		for (k=0;k<3;k++){
-			hVel[i][k]+=accel_sum[k]*INTERVAL;
-			hPos[i][k]=hVel[i][k]*INTERVAL;
+			d_hVel[i][k]+=accel_sum[k]*INTERVAL;
+			d_hPos[i][k]=d_hVel[i][k]*INTERVAL;
 		}
 }
 

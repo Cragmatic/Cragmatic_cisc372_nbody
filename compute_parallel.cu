@@ -21,7 +21,7 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 	}
 	else{
 		vector3 distance;
-		for (k=0;k<3;k++) distance[k]=d_hPos[i][k]-d_hPos[j][k];printf("distances: at %d,%d: %f\t%f\t%f\n", i, j, distance[0],distance[1],distance[2]);
+		for (k=0;k<3;k++) distance[k]=d_hPos[i][k]-d_hPos[j][k];
 		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 		double magnitude=sqrt(magnitude_sq);
 		double accelmag=-1*GRAV_CONSTANT*d_mass[j]/magnitude_sq;

@@ -5,11 +5,14 @@
 
 //My Kernel
 //Whatever I called it
-__global__ void pairwise_accel(vector3** accels, vector3* hPos, double* mass) {
+__global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, double* mass) {
 	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	int j = blockIdx.y * blockDim.y + threadIdx.y;
+	if (i > NUMENTITIES || j > NUMENTITIES) {
+		return;
+	}
 	if (i==j) {
 		FILL_VECTOR(accels[i][j],0,0,0);
 	}
@@ -21,6 +24,17 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, double* mass) {
 		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
 		FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
+
+	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+		vector3 accel_sum={0,0,0};
+		for (k=0;k<3;k++)
+			accel_sum[k]+=accels[i][j][k];
+		//compute the new velocity based on the acceleration and time interval
+		//compute the new position based on the velocity and time interval
+		for (k=0;k<3;k++){
+			hVel[i][k]+=accel_sum[k]*INTERVAL;
+			hPos[i][k]=hVel[i][k]*INTERVAL;
+		}
 }
 
 
@@ -28,7 +42,7 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, double* mass) {
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-void compute(){
+void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
 	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);
@@ -58,21 +72,12 @@ void compute(){
 	//MY CODE SECTION (1st attempt):
 	vector3** d_accels;
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES);
-	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
-	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
-
 	cudaMemcpy(d_accels, accels, sizeof(vector3*) * NUMENTITIES, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-	//cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-	dim3 dimBlock(16, 16);
-	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
-	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, mass);
-	cudaMemcpy(accels, d_accels, sizeof(vector3*) * NUMENTITIES, cudaMemcpyDeviceToHost);
-	cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
-
+	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, mass);
 	//END MY CODE SECTION
 
 
+	/*COMMENTED OUT
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 	for (i=0;i<NUMENTITIES;i++){
 		vector3 accel_sum={0,0,0};
@@ -87,11 +92,10 @@ void compute(){
 			hPos[i][k]=hVel[i][k]*INTERVAL;
 		}
 	}
+	*/
 	free(accels);
 	free(values);
 
 	//Parallel Frees
 	cudaFree(d_accels);
-	cudaFree(d_hPos);
-	cudaFree(d_hVel);
 }

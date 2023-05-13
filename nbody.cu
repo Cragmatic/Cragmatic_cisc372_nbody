@@ -102,10 +102,29 @@ int main(int argc, char **argv)
 	#ifdef DEBUG
 	printSystem(stdout);
 	#endif
-    //cudaMalloc();
+
+    //start block
+	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
+	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
+
+	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	dim3 dimBlock(16, 16);
+	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
+    //end block
+
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		compute();
+		compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid); //Altered
 	}
+
+    //start block 2
+    cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
+	cudaMemcpy(hVel, d_Vel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
+    
+    cudaFree(d_hPos);
+	cudaFree(d_hVel);
+    //end block 2
+
 	clock_t t1=clock()-t0;
 #ifdef DEBUG
 	printSystem(stdout);

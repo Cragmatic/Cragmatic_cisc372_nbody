@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	dim3 dimBlock(16, 16);
-	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.x);
+	dim3 dimGrid(1 + NUMENTITIES/dimBlock.x, 1 + NUMENTITIES/dimBlock.y);
     //end block
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){

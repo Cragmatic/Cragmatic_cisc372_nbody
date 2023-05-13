@@ -83,7 +83,7 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 
 	//MY CODE SECTION (1st attempt):
 	vector3** d_accels;
-	vector3* d_values
+	vector3* d_values;
 	cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES);
 	for (i=0;i<NUMENTITIES;i++)

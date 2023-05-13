@@ -28,7 +28,9 @@ __global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, do
 		FILL_VECTOR(accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
 	printf("accels at %d, %d:\n", i, j);
-	for (k=0;k<3;k++) printf("%d\t" accels[i*NUMENTITIES+j][k]);
+	for (k=0;k<3;k++) {
+		printf("%d\t" accels[i*NUMENTITIES+j][k]);
+	}
 	printf("\n");
 	__syncthreads();
 

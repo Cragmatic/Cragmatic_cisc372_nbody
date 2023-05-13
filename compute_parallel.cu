@@ -36,7 +36,9 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 		vector3 accel_sum={0,0,0};
 		for (k=0;k<3;k++)
 			accel_sum[k]+=accels[i][j][k];
-		__syncthreads();
+		
+//????
+
 		//compute the new velocity based on the acceleration and time interval
 		//compute the new position based on the velocity and time interval
 		for (k=0;k<3;k++){

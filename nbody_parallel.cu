@@ -117,7 +117,7 @@ int main(int argc, char **argv)
     //end block
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		compute(d_hPos, d_hVel, dimBlock, dimGrid); //Altered
+		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid); //Altered
 		//printf("I am about to call pairwise. wow!!!");
 		//pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
 		cudaDeviceSynchronize();

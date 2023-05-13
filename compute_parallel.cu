@@ -49,7 +49,7 @@ __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
+void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	//int i,j,k;
 	/**

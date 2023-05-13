@@ -3,6 +3,26 @@
 #include "vector.h"
 #include "config.h"
 
+//My Kernel
+//Whatever I called it
+__global__ void pairwise_accel(vector3** accels, vector3* hPos, double* mass) {
+	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	int j = blockIdx.y * blockDim.y + threadIdx.y;
+	if (i==j) {
+		FILL_VECTOR(accels[i][j],0,0,0);
+	}
+	else{
+		vector3 distance;
+		for (k=0;k<3;k++) distance[k]=hPos[i][k]-hPos[j][k];
+		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
+		double magnitude=sqrt(magnitude_sq);
+		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
+		FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
+	}
+}
+
+
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
 //Returns: None
@@ -45,7 +65,7 @@ void compute(){
 	//cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	dim3 dimBlock(16, 16);
 	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
-	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos);
+	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, mass);
 	cudaMemcpy(accels, d_accels, sizeof(vector3*) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 
@@ -73,22 +93,4 @@ void compute(){
 	cudaFree(d_accels);
 	cudaFree(d_hPos);
 	cudaFree(d_hVel);
-}
-
-
-__global__ void pairwise_accel(vector3** accels, vector3* hPos) {
-	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	int j = blockIdx.y * blockDim.y + threadIdx.y;
-	if (i==j) {
-		FILL_VECTOR(accels[i][j],0,0,0);
-	}
-	else{
-		vector3 distance;
-		for (k=0;k<3;k++) distance[k]=hPos[i][k]-hPos[j][k];
-		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
-		double magnitude=sqrt(magnitude_sq);
-		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
-		FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
-	}
 }

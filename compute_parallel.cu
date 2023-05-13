@@ -6,7 +6,7 @@
 
 //My Kernel
 //Whatever I called it
-__global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, double* mass) {
+__global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, double* mass) {
 	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -21,7 +21,7 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 		return;
 	}
 	if (i==j) {
-		FILL_VECTOR(accels[i][j],0,0,0);
+		FILL_VECTOR(accels[i*NUMENTITIES+j],0,0,0);
 	}
 	else{
 		vector3 distance;
@@ -29,14 +29,14 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 		double magnitude=sqrt(magnitude_sq);
 		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
-		FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
+		FILL_VECTOR(accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
 	__syncthreads();
 
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 		vector3 accel_sum={0,0,0};
 		for (k=0;k<3;k++)
-			accel_sum[k]+=accels[i][j][k];
+			accel_sum[k]+=accels[i*NUMENTITIES+j][k];
 		
 //????
 	__syncthreads();
@@ -82,12 +82,9 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 
 
 	//MY CODE SECTION (1st attempt):
-	vector3** d_accels;
-	vector3* d_values;
-	cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
-	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES);
-	for (i=0;i<NUMENTITIES;i++)
-		d_accels[i]=&d_values[i*NUMENTITIES];
+	vector3* d_accels;
+	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
+	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
 	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, mass);
 	//END MY CODE SECTION
 
@@ -113,5 +110,4 @@ void compute(vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid){
 
 	//Parallel Frees
 	cudaFree(d_accels);
-	cudaFree(d_values);
 }

@@ -31,6 +31,7 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
 		FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
+	__syncthreads();
 
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 		vector3 accel_sum={0,0,0};
@@ -38,6 +39,7 @@ __global__ void pairwise_accel(vector3** accels, vector3* hPos, vector3* hVel, d
 			accel_sum[k]+=accels[i][j][k];
 		
 //????
+	__syncthreads();
 
 		//compute the new velocity based on the acceleration and time interval
 		//compute the new position based on the velocity and time interval

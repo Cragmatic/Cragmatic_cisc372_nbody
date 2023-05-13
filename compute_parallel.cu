@@ -6,6 +6,7 @@
 //My Kernel
 //Whatever I called it
 __global__ void pairwise_accel(vector3** accels, vector3* hPos, double* mass) {
+	int k;
 	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	int j = blockIdx.y * blockDim.y + threadIdx.y;

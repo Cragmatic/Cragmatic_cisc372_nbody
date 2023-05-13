@@ -2,23 +2,6 @@
 #include <math.h>
 #include "vector.h"
 #include "config.h"
-#include <stdio.h> //I added this to print my silly little dumb kernel.
-
-
-__global__ 
-void dumb_kernel(int size, int* matrix) {
-	//printf("%d is the current thread\n", threadIdx.x);
-	for (int i=0; i<size*10; i++) {
-		matrix[i] = i;
-		/*
-		for (int j=0; j<size; j++) {
-			matrix[i*size+j] = i*size+j+threadIdx.x;
-		}
-		*/
-	}
-}
-
-/*
 
 //compute: Updates the positions and locations of the objects in the system based on gravity.
 //Parameters: None
@@ -31,6 +14,7 @@ void compute(){
 	vector3** accels=(vector3**)malloc(sizeof(vector3*)*NUMENTITIES);
 	for (i=0;i<NUMENTITIES;i++)
 		accels[i]=&values[i*NUMENTITIES];
+	/**
 	//first compute the pairwise accelerations.  Effect is on the first argument.
 	for (i=0;i<NUMENTITIES;i++){
 		for (j=0;j<NUMENTITIES;j++){
@@ -47,6 +31,27 @@ void compute(){
 			}
 		}
 	}
+	Commented out original code */
+
+
+	//MY CODE SECTION (1st attempt):
+	vector3** d_accels;
+	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES);
+	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
+	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
+
+	cudaMemcpy(d_accels, accels, sizeof(vector3*) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	//cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	dim3 dimBlock(16, 16);
+	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
+	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos);
+	cudaMemcpy(accels, d_accels, sizeof(vector3*) * NUMENTITIES, cudaMemcpyDeviceToHost);
+	cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
+
+	//END MY CODE SECTION
+
+
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 	for (i=0;i<NUMENTITIES;i++){
 		vector3 accel_sum={0,0,0};
@@ -63,53 +68,27 @@ void compute(){
 	}
 	free(accels);
 	free(values);
+
+	//Parallel Frees
+	cudaFree(d_accels);
+	cudaFree(d_hPos);
+	cudaFree(d_hVel);
 }
 
 
-__global__
-void sum_rows(int n, vector3* accel_sum, vector3** accels) {
-	int index = threadIdx.x;
-	int stride = blockDim.x;
-	for (int i=0; i<n; i+=stride) {
-		accel_sum[n] += 0;
+__global__ void pairwise_accel(vector3** accels, vector3* hPos) {
+	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	int j = blockIdx.y * blockDim.y + threadIdx.y;
+	if (i==j) {
+		FILL_VECTOR(accels[i][j],0,0,0);
 	}
-}
-*/
-
-
-void do_thing() {
-	printf("starting the function\n");
-	int my_matrix[100];
-	for (int i = 0; i < 100; i++) {
-			my_matrix[i] = 0;
-			printf("%d\t", my_matrix[i]);
-		}
-	printf("initialized local matrix\n");
-	int d_my_matrix[100];
-	//cudaMallocManaged(&my_matrix, 100*sizeof(int));
-	printf("allocating matrix on device\n");
-	cudaMalloc((void**) &d_my_matrix, 10*10*sizeof(int));
-	printf("copying matrix to device\n");
-	cudaMemcpy(d_my_matrix, my_matrix, 10*10*sizeof(int), cudaMemcpyHostToDevice);
-	//cudaDeviceSynchronize();
-	printf("cuda malloc completedd\n");
-	dumb_kernel<<<1, 1>>>(10, d_my_matrix);
-	printf("launched kernel\n");
-	cudaDeviceSynchronize();
-	printf("sync'd up\n");
-	cudaMemcpy(my_matrix, d_my_matrix, 10*10*sizeof(int), cudaMemcpyDeviceToHost);
-	printf("copied back\n");
-	cudaFree(d_my_matrix);
-	printf("freed device matrix\n");
-	for (int i = 0; i < 100; i++) {
-		printf("%d\n", my_matrix[i]);
-		/*
-		printf("\n");
-		for (int j = 0; j < 10; j++) {
-			printf("%d\t", my_matrix[i*10+j]);
-		}
-		*/
+	else{
+		vector3 distance;
+		for (k=0;k<3;k++) distance[k]=hPos[i][k]-hPos[j][k];
+		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
+		double magnitude=sqrt(magnitude_sq);
+		double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
+		FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 	}
-	printf("done\n");
-
 }

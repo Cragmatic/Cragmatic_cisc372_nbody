@@ -29,7 +29,7 @@ __global__ void pairwise_accel(vector3* accels, vector3* hPos, vector3* hVel, do
 	}
 	printf("accels at %d, %d:\n", i, j);
 	for (k=0;k<3;k++) {
-		printf("%d\t" accels[i*NUMENTITIES+j][k]);
+		printf("%d\t", accels[i*NUMENTITIES+j][k]);
 	}
 	printf("\n");
 	__syncthreads();

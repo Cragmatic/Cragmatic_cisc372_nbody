@@ -4,7 +4,7 @@
 #include "config.h"
 #include <stdio.h>
 
-__global__ void compute(vector3* accels, vector3* hPos, vector3* hVel, dim3 dimBlock, dim3 dimGrid, double* mass){
+__global__ void compute(vector3* d_accels, vector3* hPos, vector3* hVel, dim3 dimBlock, dim3 dimGrid, double* mass){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	int i,j,k;
 	vector3* values=(vector3*)malloc(sizeof(vector3)*NUMENTITIES*NUMENTITIES);

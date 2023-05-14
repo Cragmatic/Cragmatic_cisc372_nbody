@@ -29,6 +29,7 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 		for (k=0;k<3;k++) distance[k]=d_hPos[i][k]-d_hPos[j][k];
 		double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 		double magnitude=sqrt(magnitude_sq);
+		if (magnitude_sq == 0) printf("NAN ALERT");
 		double accelmag=-1*GRAV_CONSTANT*d_mass[j]/magnitude_sq;
 		FILL_VECTOR(d_accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
 		if (i==10 && j==0) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, d_accels[i*NUMENTITIES+j][0],d_accels[i*NUMENTITIES+j][1],d_accels[i*NUMENTITIES+j][2]);

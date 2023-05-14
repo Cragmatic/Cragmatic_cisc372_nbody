@@ -157,6 +157,7 @@ int main(int argc, char **argv)
     
     cudaFree(d_hPos);
 	cudaFree(d_hVel);
+	cudaFree(dev_mass);
     //end block 2
 
 	clock_t t1=clock()-t0;

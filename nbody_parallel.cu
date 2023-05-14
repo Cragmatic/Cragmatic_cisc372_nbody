@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
-	//cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
+	cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
 
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix

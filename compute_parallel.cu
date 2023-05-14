@@ -55,7 +55,7 @@ __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3
 //Parameters: None
 //Returns: None
 //Side Effect: Modifies the hPos and hVel arrays with the new positions and accelerations after 1 INTERVAL
-void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid, double* d_mass){
+void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid, double* dev_mass){
 	//make an acceleration matrix which is NUMENTITIES squared in size;
 	//int i,j,k;
 	/**
@@ -84,9 +84,9 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock,
 
 	//MY CODE SECTION (1st attempt):
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
-	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, d_mass);
+	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
-	sum_rows_and_compute<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, d_mass);
+	sum_rows_and_compute<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
 	
 	//END MY CODE SECTION

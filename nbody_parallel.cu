@@ -12,7 +12,7 @@ vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;
 vector3* d_accels;
 double *mass;
-double *d_mass;
+double *dev_mass;
 
 //initHostMemory: Create storage for numObjects entities in our system
 //Parameters: numObjects: number of objects to allocate
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
-	cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
+	cudaMalloc(&dev_mass, sizeof(double) * NUMENTITIES);
 
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
     //end block
 	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice); //copy mass up into d_mass
+	cudaMemcpy(dev_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice); //copy mass up into d_mass
 	cudaDeviceSynchronize();
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){

@@ -89,6 +89,24 @@ void printSystem(FILE* handle){
 	}
 }
 
+//Debug Function
+__global__ void print_from_kernel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* dev_mass) {
+	int i,j;
+	printf("num entities: %d\n", NUMENTITIES);
+	for (i=0;i<NUMENTITIES;i++){
+		printf("pos=(");
+		for (j=0;j<3;j++){
+			printf("%lf,",d_hPos[i][j]);
+		}
+		printf("),v=(");
+		for (j=0;j<3;j++){
+			printf("%lf,",d_hVel[i][j]);
+		}
+		printf("),m=%lf\n",dev_mass[i]);
+	}
+}
+//End Debug Function
+
 int main(int argc, char **argv)
 {
 	clock_t t0=clock();
@@ -119,6 +137,8 @@ int main(int argc, char **argv)
 	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
     //end block
 	cudaDeviceSynchronize();
+
+	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered

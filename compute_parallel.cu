@@ -84,8 +84,9 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock,
 	//MY CODE SECTION (1st attempt):
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, d_mass);
+	cudaDeviceSynchronize();
 	sum_rows_and_compute<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_accels, d_hPos, d_hVel, d_mass);
-	
+	cudaDeviceSynchronize();
 	
 	//END MY CODE SECTION
 

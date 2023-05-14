@@ -118,6 +118,7 @@ int main(int argc, char **argv)
 	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice); //copy mass up into d_mass
+	cudaDeviceSynchronize();
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, d_mass); //Altered

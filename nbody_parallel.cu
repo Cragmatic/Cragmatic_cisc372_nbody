@@ -129,9 +129,11 @@ int main(int argc, char **argv)
 
     //start block 2
 	printf("hVel[0] before: %f, %f, %f", hVel[0][0], hVel[0][1], hVel[0][2]);
+	printf("hPos[0] before: %f, %f, %f", hPos[0][0], hPos[0][1], hPos[0][2]);
     cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	printf("hVel[0] after: %f, %f, %f", hVel[0][0], hVel[0][1], hVel[0][2]);
+	printf("hPos[0] before: %f, %f, %f", hPos[0][0], hPos[0][1], hPos[0][2]);
     
     cudaFree(d_hPos);
 	cudaFree(d_hVel);

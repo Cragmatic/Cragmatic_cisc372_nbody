@@ -18,7 +18,7 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 	}
 	*/
 	//HELLO? WHAT THE FRICK?
-	if (i > NUMENTITIES || j > NUMENTITIES) {
+	if (i >= NUMENTITIES || j >= NUMENTITIES) {
 		return;
 	}
 	if (i==j) {

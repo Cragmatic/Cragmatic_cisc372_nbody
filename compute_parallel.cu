@@ -26,7 +26,7 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 		double magnitude=sqrt(magnitude_sq);
 		double accelmag=-1*GRAV_CONSTANT*d_mass[j]/magnitude_sq;
 		FILL_VECTOR(d_accels[i*NUMENTITIES+j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
-		if (i==1 && j==3) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, d_accels[i*NUMENTITIES+j][0],d_accels[i*NUMENTITIES+j][1],d_accels[i*NUMENTITIES+j][2]);
+		if (i==3 && j==1) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, d_accels[i*NUMENTITIES+j][0],d_accels[i*NUMENTITIES+j][1],d_accels[i*NUMENTITIES+j][2]);
 	}
 }
 

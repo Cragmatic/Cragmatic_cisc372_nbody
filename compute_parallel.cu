@@ -17,7 +17,7 @@ __global__ void print_from_kernel(vector3* d_accels, vector3* d_hPos, vector3* d
 		for (j=0;j<3;j++){
 			printf("%lf,",d_hVel[i][j]);
 		}
-		printf("),m=%lf\n",d_mass[i]);
+		printf("),m=%lf\n",dev_mass[i]);
 	}
 }
 //My Kernel
@@ -102,7 +102,7 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock,
 
 	//MY CODE SECTION (1st attempt):
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
-	print_from_kernel<<1,1>>(d_accels, d_hPos, d_hVel, dev_mass);
+	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
 	sum_rows_and_compute<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);

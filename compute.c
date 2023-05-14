@@ -28,7 +28,7 @@ void compute(){
 				double magnitude=sqrt(magnitude_sq);
 				double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
 				FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
-				if (i==3 && j==1) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, accels[i][j][0],accels[i][j][1],accels[i][j][2]);
+				if (i==5 && j==0) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, accels[i][j][0],accels[i][j][1],accels[i][j][2]);
 			}
 		}
 	}

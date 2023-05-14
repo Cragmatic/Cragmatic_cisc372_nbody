@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
-	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
+	dim3 dimGrid((NUMENTITIES+dimBlock.x-1)/dimBlock.x, (NUMENTITIES+dimBlock.y-1)/dimBlock.y);
 	printf("dimGrid: %d, %d",dimGrid.x, dimGrid.y);
     //end block
 	cudaDeviceSynchronize();

@@ -4,6 +4,22 @@
 #include "config.h"
 #include <stdio.h>
 
+
+__global__ void print_from_kernel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock, dim3 dimGrid, double* dev_mass) {
+	int i,j;
+	printf("num entities: %d\n", NUMENTITIES);
+	for (i=0;i<NUMENTITIES;i++){
+		printf("pos=(");
+		for (j=0;j<3;j++){
+			printf("%lf,",d_hPos[i][j]);
+		}
+		printf("),v=(");
+		for (j=0;j<3;j++){
+			printf("%lf,",d_hVel[i][j]);
+		}
+		printf("),m=%lf\n",d_mass[i]);
+	}
+}
 //My Kernel
 //Whatever I called it
 __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* d_mass) {
@@ -86,6 +102,7 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock,
 
 	//MY CODE SECTION (1st attempt):
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
+	print_from_kernel<<1,1>>(d_accels, d_hPos, d_hVel, dev_mass);
 	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
 	sum_rows_and_compute<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);

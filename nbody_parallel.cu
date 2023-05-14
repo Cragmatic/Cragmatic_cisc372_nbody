@@ -10,9 +10,6 @@
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;
-vector3* d_accels;
-double *mass;
-double *dev_mass;
 
 //initHostMemory: Create storage for numObjects entities in our system
 //Parameters: numObjects: number of objects to allocate
@@ -106,6 +103,9 @@ int main(int argc, char **argv)
 	#endif
 
     //start block
+	vector3* d_accels;
+	double *mass;
+	double *dev_mass;
 	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);

@@ -109,15 +109,15 @@ int main(int argc, char **argv)
 	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
-	cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
+	//cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
 
-	cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice); //copy mass up into d_mass
-	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
 	dim3 dimGrid(NUMENTITIES/dimBlock.x, NUMENTITIES/dimBlock.y);
     //end block
+	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice); //copy mass up into d_mass
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, d_mass); //Altered

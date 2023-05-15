@@ -148,6 +148,7 @@ int main(int argc, char **argv)
 		//pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
 		cudaDeviceSynchronize();
 	}
+	printf("printing the final config on the device\n");
 	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
     //start block 2

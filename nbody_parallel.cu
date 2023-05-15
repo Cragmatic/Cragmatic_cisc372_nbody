@@ -138,7 +138,7 @@ int main(int argc, char **argv)
 	//printf("\n\ndimGrid: %d, %d",dimGrid.x, dimGrid.y);
     //end block
 	cudaDeviceSynchronize();
-	//print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered

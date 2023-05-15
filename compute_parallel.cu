@@ -15,7 +15,7 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 	if (i >= NUMENTITIES || j >= NUMENTITIES) {
 		return;
 	}
-	if (blockDim.y > 0) {
+	if (blockIdx.y > 0) {
 	printf("Hello from thread coordinates %d, %d with args bidx.x: %d, bdim.x: %d, tidx.x: %d, bidx.y: %d, bdim.y: %d, tidx.y: %d, mass: %d\n", 
 	i, j, blockIdx.x, blockDim.x, threadIdx.x, blockIdx.y, blockDim.y, threadIdx.y, d_mass[j]);
 	}

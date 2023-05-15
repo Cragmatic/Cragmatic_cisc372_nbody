@@ -39,22 +39,20 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 
 
 __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* d_mass) {
-	int k;
-	//Assuming we spawn enough blocks+threads to cover the whole NUMENTITIESxNUMENTITIES matrix, each thread does 1 calculation
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	int j = blockIdx.y * blockDim.y + threadIdx.y;
-	if (i >= NUMENTITIES || j >= NUMENTITIES) {
-		return;
-	}
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+	for (i=0;i<NUMENTITIES;i++){
 		vector3 accel_sum={0,0,0};
-		for (k=0;k<3;k++)
-			accel_sum[k]+=d_accels[i*NUMENTITIES+j][k];
-
+		for (j=0;j<NUMENTITIES;j++){
+			for (k=0;k<3;k++)
+				accel_sum[k]+=d_accels[i][j][k];
+		}
+		//compute the new velocity based on the acceleration and time interval
+		//compute the new position based on the velocity and time interval
 		for (k=0;k<3;k++){
 			d_hVel[i][k]+=accel_sum[k]*INTERVAL;
 			d_hPos[i][k]=d_hVel[i][k]*INTERVAL;
 		}
+	}
 }
 
 

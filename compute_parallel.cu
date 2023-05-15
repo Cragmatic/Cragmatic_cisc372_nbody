@@ -50,7 +50,7 @@ __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3
 		//compute the new velocity based on the acceleration and time interval
 		//compute the new position based on the velocity and time interval
 		for (k=0;k<3;k++){
-			printf("adding accel_sum[%d]: %f\n", k, accel_sum[k]);
+			if (i == NUMENTITIES-1): (printf("adding accel_sum[%d] of %d: %f\n", k, i, accel_sum[k]);
 			d_hVel[i][k]+=accel_sum[k]*INTERVAL;
 			d_hPos[i][k]=d_hVel[i][k]*INTERVAL;
 		}

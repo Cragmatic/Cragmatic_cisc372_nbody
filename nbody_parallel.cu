@@ -139,16 +139,17 @@ int main(int argc, char **argv)
 	printf("\n\ndimGrid: %d, %d\n\n",dimGrid.x, dimGrid.y);
     //end block
 	cudaDeviceSynchronize();
-	//print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		//compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered
-		compute<<<1, 1>>>(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass);
+		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered
+		//compute<<<1, 1>>>(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass);
 		//printf("I am about to call pairwise. wow!!!");
 		//pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
 		cudaDeviceSynchronize();
 	}
-
+	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	cudaDeviceSynchronize();
     //start block 2
 	//printf("hVel[0] before: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
 	//printf("hPos[0] before: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);

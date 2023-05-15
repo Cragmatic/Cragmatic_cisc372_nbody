@@ -5,12 +5,14 @@
 #include "vector.h"
 #include "config.h"
 #include "planets.h"
-#include "compute_parallel.h"
+#include "compute.h"
 
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
 vector3 *hPos, *d_hPos;
 double *mass;
+double *d_mass;
+vector3 **accels;
 
 //initHostMemory: Create storage for numObjects entities in our system
 //Parameters: numObjects: number of objects to allocate
@@ -89,25 +91,6 @@ void printSystem(FILE* handle){
 	}
 }
 
-//Debug Function
-__global__ void print_from_kernel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* dev_mass) {
-	int i,j;
-	printf("starting print from kernel with num entities: %d\n", NUMENTITIES);
-	printf("\n");
-	for (i=0;i<NUMENTITIES;i++){
-		printf("pos=(");
-		for (j=0;j<3;j++){
-			printf("%lf,",d_hPos[i][j]);
-		}
-		printf("),v=(");
-		for (j=0;j<3;j++){
-			printf("%lf,",d_hVel[i][j]);
-		}
-		printf("),m=%lf\n",dev_mass[i]);
-	}
-}
-//End Debug Function
-
 int main(int argc, char **argv)
 {
 	clock_t t0=clock();
@@ -119,57 +102,32 @@ int main(int argc, char **argv)
 	randomFill(NUMPLANETS + 1, NUMASTEROIDS);
 	//now we have a system.
 	#ifdef DEBUG
-		//printSystem(stdout);
+	printSystem(stdout);
 	#endif
-
-    //start block
-	vector3* d_accels;
-	double *dev_mass;
-	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
-	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	//Load hVel, hPos, and mass into device memory
 	cudaMalloc(&d_hVel, sizeof(vector3) * NUMENTITIES);
 	cudaMemcpy(d_hVel, hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
-	cudaMalloc(&dev_mass, sizeof(double) * NUMENTITIES);
-	cudaMemcpy(dev_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice); //copy mass up into d_mass
-	cudaMalloc(&d_accels, sizeof(vector3*)*NUMENTITIES*NUMENTITIES);
-
-	dim3 dimBlock(16, 16);
-	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
-	dim3 dimGrid((NUMENTITIES+dimBlock.x-1)/dimBlock.x, (NUMENTITIES+dimBlock.y-1)/dimBlock.y);
-	printf("\n\ndimGrid: %d, %d\n\n",dimGrid.x, dimGrid.y);
-    //end block
-	cudaDeviceSynchronize();
-	//print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	cudaMalloc(&d_hPos, sizeof(vector3) * NUMENTITIES);
+	cudaMemcpy(d_hPos, hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyHostToDevice);
+	cudaMalloc(&d_mass, sizeof(double) * NUMENTITIES);
+	cudaMemcpy(d_mass, mass, sizeof(double) * NUMENTITIES, cudaMemcpyHostToDevice);
+	//Allocate room for values on device memory
+	cudaMalloc(&d_accels, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered
-		//compute<<<1, 1>>>(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass);
-		//printf("I am about to call pairwise. wow!!!");
-		//pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
-		cudaDeviceSynchronize();
+		compute();
 	}
-	printf("printing the final config on the device\n");
-	cudaDeviceSynchronize();
-	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
-	printf("\n\n\n\n\n\n\n\n");
-    //start block 2
-	//printf("hVel[0] before: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
-	//printf("hPos[0] before: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
-    cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
-	//printf("hVel[0] after: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
-	//printf("hPos[0] after: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
-    cudaDeviceSynchronize();
-    cudaFree(d_hPos);
-	cudaFree(d_hVel);
-	cudaFree(dev_mass);
-    //end block 2
-
+	cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	clock_t t1=clock()-t0;
 #ifdef DEBUG
-	//printSystem(stdout);
+	printSystem(stdout);
 #endif
 	printf("This took a total time of %f seconds\n",(double)t1/CLOCKS_PER_SEC);
 
+	cudaFree(d_hVel);
+	cudaFree(d_hPos);
+	cudaFree(d_mass);
+	cudaFree(d_accels);
 	freeHostMemory();
 }

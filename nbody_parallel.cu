@@ -149,8 +149,9 @@ int main(int argc, char **argv)
 		cudaDeviceSynchronize();
 	}
 	printf("printing the final config on the device\n");
-	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
+	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	printf("\n\n\n\n\n\n\n\n");
     //start block 2
 	//printf("hVel[0] before: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
 	//printf("hPos[0] before: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);

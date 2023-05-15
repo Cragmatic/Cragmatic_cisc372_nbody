@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 	randomFill(NUMPLANETS + 1, NUMASTEROIDS);
 	//now we have a system.
 	#ifdef DEBUG
-	printSystem(stdout);
+		//printSystem(stdout);
 	#endif
 
     //start block
@@ -135,10 +135,10 @@ int main(int argc, char **argv)
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
 	dim3 dimGrid((NUMENTITIES+dimBlock.x-1)/dimBlock.x, (NUMENTITIES+dimBlock.y-1)/dimBlock.y);
-	printf("\n\ndimGrid: %d, %d",dimGrid.x, dimGrid.y);
+	//printf("\n\ndimGrid: %d, %d",dimGrid.x, dimGrid.y);
     //end block
-	cudaDeviceSynchronize();
-	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	//cudaDeviceSynchronize();
+	//print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
 		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 
 	clock_t t1=clock()-t0;
 #ifdef DEBUG
-	printSystem(stdout);
+	//printSystem(stdout);
 #endif
 	printf("This took a total time of %f seconds\n",(double)t1/CLOCKS_PER_SEC);
 

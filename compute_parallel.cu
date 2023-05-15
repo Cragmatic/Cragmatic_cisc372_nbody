@@ -23,10 +23,10 @@ __global__ void compute(vector3* d_accels, vector3* hPos, vector3* hVel, dim3 di
 				for (k=0;k<3;k++) distance[k]=hPos[i][k]-hPos[j][k];
 				double magnitude_sq=distance[0]*distance[0]+distance[1]*distance[1]+distance[2]*distance[2];
 				double magnitude=sqrt(magnitude_sq);
-				if (i==10 && j==0) printf("distances at %d, %d: %f\t%f\t%f\n", i, j, distance[0],distance[1],distance[2]);
+				//if (i==10 && j==0) printf("distances at %d, %d: %f\t%f\t%f\n", i, j, distance[0],distance[1],distance[2]);
 				double accelmag=-1*GRAV_CONSTANT*mass[j]/magnitude_sq;
 				FILL_VECTOR(accels[i][j],accelmag*distance[0]/magnitude,accelmag*distance[1]/magnitude,accelmag*distance[2]/magnitude);
-				if (i==10 && j==0) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, accels[i][j][0],accels[i][j][1],accels[i][j][2]);
+				//if (i==10 && j==0) printf("accels at %d, %d: %f\t%f\t%f\n", i, j, accels[i][j][0],accels[i][j][1],accels[i][j][2]);
 			}
 		}
 	}

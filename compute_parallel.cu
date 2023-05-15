@@ -40,6 +40,7 @@ __global__ void pairwise_accel(vector3* d_accels, vector3* d_hPos, vector3* d_hV
 
 __global__ void sum_rows_and_compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* d_mass) {
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
+	int i, j, k;
 	for (i=0;i<NUMENTITIES;i++){
 		vector3 accel_sum={0,0,0};
 		for (j=0;j<NUMENTITIES;j++){
@@ -92,7 +93,7 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, dim3 dimBlock,
 	//cudaMalloc(&d_values, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 	pairwise_accel<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
-	sum_rows_and_compute<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_hVel, dev_mass);
+	sum_rows_and_compute<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 	cudaDeviceSynchronize();
 	
 	//END MY CODE SECTION

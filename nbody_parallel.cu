@@ -81,7 +81,7 @@ void printSystem(FILE* handle){
 		for (j=0;j<3;j++){
 			fprintf(handle,"%lf,",hPos[i][j]);
 		}
-		printf("),v=(");
+		fprintf("),v=(");
 		for (j=0;j<3;j++){
 			fprintf(handle,"%lf,",hVel[i][j]);
 		}
@@ -92,7 +92,7 @@ void printSystem(FILE* handle){
 //Debug Function
 __global__ void print_from_kernel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* dev_mass) {
 	int i,j;
-	printf("num entities: %d\n", NUMENTITIES);
+	printf("starting print from kernel with num entities: %d\n", NUMENTITIES);
 	for (i=0;i<NUMENTITIES;i++){
 		printf("pos=(");
 		for (j=0;j<3;j++){

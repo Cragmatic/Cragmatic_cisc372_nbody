@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 	randomFill(NUMPLANETS + 1, NUMASTEROIDS);
 	//now we have a system.
 	#ifdef DEBUG
-	//printSystem(stdout);
+	printSystem(stdout);
 	#endif
 
     //start block
@@ -135,10 +135,9 @@ int main(int argc, char **argv)
 	dim3 dimBlock(16, 16);
 	//Spawns in enough 16x16 blocks arranged in NxN to coveer the whole matrix
 	dim3 dimGrid((NUMENTITIES+dimBlock.x-1)/dimBlock.x, (NUMENTITIES+dimBlock.y-1)/dimBlock.y);
-	printf("\n\ndimGrid: %d, %d\n",dimGrid.x, dimGrid.y);
+	printf("\n\ndimGrid: %d, %d",dimGrid.x, dimGrid.y);
     //end block
 	cudaDeviceSynchronize();
-	printf("print from kernel\n");
 	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
@@ -150,12 +149,12 @@ int main(int argc, char **argv)
 	}
 
     //start block 2
-	//printf("hVel[0] before: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
-	//printf("hPos[0] before: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
+	printf("hVel[0] before: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
+	printf("hPos[0] before: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
     cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
-	//printf("hVel[0] after: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
-	//printf("hPos[0] after: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
+	printf("hVel[0] after: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
+	printf("hPos[0] after: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
     
     cudaFree(d_hPos);
 	cudaFree(d_hVel);

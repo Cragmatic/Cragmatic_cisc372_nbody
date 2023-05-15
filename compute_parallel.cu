@@ -30,6 +30,9 @@ __global__ void compute_pairwise(vector3* accels, vector3* hPos, double* mass) {
 __global__ void update_bodies(vector3* accels, vector3* hVel, vector3* hPos) {
 	//Assuming that each call to update_bodies has enough blocks/threads that each is summing one column.
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i > NUMENTITIES) {
+		return;
+	}
 	int j, k;
 	//sum up the rows of our matrix to get effect on each entity, then update velocity and position.
 	vector3 accel_sum={0,0,0};

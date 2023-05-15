@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	cudaMalloc(&d_accels, sizeof(vector3)*NUMENTITIES*NUMENTITIES);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		compute();
+		compute(d_accels, d_hPos, d_hVel, d_mass);
 	}
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);

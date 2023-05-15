@@ -55,5 +55,5 @@ void compute(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* d_mass
 	compute_pairwise<<<dimGrid, dimBlock>>>(d_accels, d_hPos, d_mass);
 	dim3 dimBlock2(256);
 	dim3 dimGrid2((NUMENTITIES+dimBlock.x-1)/dimBlock.x);
-	update_bodies<<<dimGrid2, dimBlock2>>>(d_accels, d_hVel, d_mass);
+	update_bodies<<<dimGrid2, dimBlock2>>>(d_accels, d_hVel, d_hPos);
 }

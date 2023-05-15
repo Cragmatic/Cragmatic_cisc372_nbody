@@ -93,6 +93,7 @@ void printSystem(FILE* handle){
 __global__ void print_from_kernel(vector3* d_accels, vector3* d_hPos, vector3* d_hVel, double* dev_mass) {
 	int i,j;
 	printf("starting print from kernel with num entities: %d\n", NUMENTITIES);
+	printf("\n");
 	for (i=0;i<NUMENTITIES;i++){
 		printf("pos=(");
 		for (j=0;j<3;j++){

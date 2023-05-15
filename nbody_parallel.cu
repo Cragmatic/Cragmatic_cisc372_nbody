@@ -148,6 +148,7 @@ int main(int argc, char **argv)
 		//pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
 		cudaDeviceSynchronize();
 	}
+	fflush(stdout);
 
     //start block 2
 	//printf("hVel[0] before: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);

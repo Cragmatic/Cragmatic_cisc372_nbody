@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	//printf("hVel[0] after: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
 	//printf("hPos[0] after: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
-    
+    cudaDeviceSynchronize();
     cudaFree(d_hPos);
 	cudaFree(d_hVel);
 	cudaFree(dev_mass);

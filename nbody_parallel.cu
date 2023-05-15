@@ -141,8 +141,8 @@ int main(int argc, char **argv)
 	print_from_kernel<<<1,1>>>(d_accels, d_hPos, d_hVel, dev_mass);
 
 	for (t_now=0;t_now<DURATION;t_now+=INTERVAL){
-		//compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered
-		compute<<<1, 1>>>(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass);
+		compute(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass); //Altered
+		//compute<<<1, 1>>>(d_accels, d_hPos, d_hVel, dimBlock, dimGrid, dev_mass);
 		//printf("I am about to call pairwise. wow!!!");
 		//pairwise_accel<<<dimGrid, dimBlock, dimBlock.x*dimBlock.y*sizeof(vector3)>>>(d_hPos, d_hVel, mass);
 		cudaDeviceSynchronize();
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
     cudaMemcpy(hPos, d_hPos, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	cudaMemcpy(hVel, d_hVel, sizeof(vector3) * NUMENTITIES, cudaMemcpyDeviceToHost);
 	printf("hVel[0] after: %f, %f, %f\n", hVel[0][0], hVel[0][1], hVel[0][2]);
-	printf("hPos[0] before: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
+	printf("hPos[0] after: %f, %f, %f\n", hPos[0][0], hPos[0][1], hPos[0][2]);
     
     cudaFree(d_hPos);
 	cudaFree(d_hVel);
